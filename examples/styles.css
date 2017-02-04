@@ -1,0 +1,22 @@
+.name-option {
+    border: black solid 5px;
+    display: inline-block;
+    height: 200px;
+    width: 200px;
+}
+
+.face-option {
+    border: black solid 5px;
+    display: inline-block;
+    height: 200px;
+    width: 200px;
+}
+
+.selected {
+    border: red solid 5px;
+}
+
+.matched {
+    border: green solid 5px;
+}
+
