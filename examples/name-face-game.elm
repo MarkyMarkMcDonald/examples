@@ -13,10 +13,6 @@ main =
         }
 
 
-
--- MODEL
-
-
 type alias Model =
     { people : List Person
     , selectedName : Maybe PersonId
@@ -53,10 +49,6 @@ initialModel =
     , selectedFace = Nothing
     , matches = []
     }
-
-
-
--- UPDATE
 
 
 type Msg
@@ -146,22 +138,28 @@ view model =
         [ div [] (List.map (nameSelect model) model.people)
         , br [] []
         , br [] []
-        , finishedMessage model
+        , messageToUser model
         , br [] []
         , br [] []
         , div [] (List.map (faceSelect model model.selectedFace) model.people)
         ]
 
 
-finishedMessage : Model -> Html Msg
-finishedMessage model =
+messageToUser : Model -> Html Msg
+messageToUser model =
     text <|
-        case finished model of
-            True ->
-                "Good Job!"
+        if finished model then
+            "Good Job!"
+        else if incorrectMatch model then
+            "Not a match, try again!"
+        else
+            ""
 
-            False ->
-                ""
+
+incorrectMatch : Model -> Bool
+incorrectMatch model =
+    Maybe.withDefault False <|
+        Maybe.map2 (/=) model.selectedName model.selectedFace
 
 
 finished : Model -> Bool
