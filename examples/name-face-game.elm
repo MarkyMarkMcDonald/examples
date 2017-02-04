@@ -1,6 +1,6 @@
 module Main exposing (..)
 
-import Html exposing (Html, button, div, text, img)
+import Html exposing (Html, button, div, text, img, br)
 import Html.Attributes exposing (src)
 import Html.Events exposing (onClick)
 
@@ -18,7 +18,10 @@ main =
 
 
 type alias Model =
-    { people : List Person }
+    { people : List Person
+    , selectedName : Maybe PersonId
+    , selectedFace : Maybe PersonId
+    }
 
 
 type alias Person =
@@ -41,6 +44,8 @@ model =
           , id = 2
           }
         ]
+    , selectedName = Nothing
+    , selectedFace = Nothing
     }
 
 
@@ -57,10 +62,16 @@ update : Msg -> Model -> Model
 update msg model =
     case msg of
         ChooseName personId ->
-            model
+            if Just personId == model.selectedName then
+                { model | selectedName = Nothing}
+            else
+                { model | selectedName = Just personId }
 
         ChooseFace personId ->
-            model
+            if Just personId == model.selectedName then
+                { model | selectedFace = Nothing }
+            else
+                { model | selectedFace = Just personId }
 
 
 
@@ -69,7 +80,15 @@ update msg model =
 
 view : Model -> Html Msg
 view model =
-    div [] (List.map nameSelect model.people)
+    div []
+    [ div [] (List.map nameSelect model.people)
+    , br [] []
+    , br [] []
+    , text ("selectedName: " ++ (toString model.selectedName) ++ ", selectedFace: " ++ (toString model.selectedFace))
+    , br [] []
+    , br [] []
+    , div [] (List.map faceSelect model.people)
+    ]
 
 
 nameSelect : Person -> Html Msg
