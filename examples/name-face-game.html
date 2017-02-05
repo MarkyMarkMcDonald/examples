@@ -22,7 +22,17 @@
                 while (document.body.firstChild) {
                         document.body.removeChild(document.body.firstChild);
                 }
-                runElmProgram();
-        </script>
+                runElmProgram({
+                    people: [
+                        {
+                          name : "Mark",
+                          faceUrl : "https://s3.amazonaws.com/parklet/public/system/production/icons/medium/b16cbb2cc5ceed6dfe2f0b6adac81758648a4bcc.?1482347071"
+                        } , {
+                          name : "Tim",
+                          faceUrl : "http://images.moc-pages.com/user_images/24014/1276371870m_SPLASH.jpg"
+                        }
+                    ]
+                });
+</script>
 
 </html>

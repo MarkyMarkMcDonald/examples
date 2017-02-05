@@ -6,10 +6,11 @@ import Html.Events exposing (onClick)
 
 
 main =
-    Html.beginnerProgram
-        { model = initialModel
+    Html.programWithFlags
+        { init = initialModel
         , view = view
         , update = update
+        , subscriptions = \_ -> Sub.none
         }
 
 
@@ -29,26 +30,36 @@ type alias Person =
     { name : String, faceUrl : String, id : Int }
 
 
+type alias UnorderedPerson =
+    { name : String, faceUrl : String }
+
+
+addIndex : Int -> UnorderedPerson -> Person
+addIndex index person =
+    { id = index
+    , name = person.name
+    , faceUrl = person.faceUrl
+    }
+
+
+withOrder : List UnorderedPerson -> List Person
+withOrder people =
+    people |> List.indexedMap addIndex
+
+
 type alias PersonId =
     Int
 
 
-initialModel : Model
-initialModel =
-    { people =
-        [ { name = "Mark"
-          , faceUrl = "https://s3.amazonaws.com/parklet/public/system/production/icons/medium/b16cbb2cc5ceed6dfe2f0b6adac81758648a4bcc.?1482347071"
-          , id = 1
-          }
-        , { name = "Tim"
-          , faceUrl = "http://images.moc-pages.com/user_images/24014/1276371870m_SPLASH.jpg"
-          , id = 2
-          }
-        ]
-    , selectedName = Nothing
-    , selectedFace = Nothing
-    , matches = []
-    }
+initialModel : { people : List UnorderedPerson } -> ( Model, Cmd msg )
+initialModel flags =
+    ( { people = flags.people |> withOrder
+      , selectedName = Nothing
+      , selectedFace = Nothing
+      , matches = []
+      }
+    , Cmd.none
+    )
 
 
 type Msg
@@ -56,9 +67,9 @@ type Msg
     | ChooseFace PersonId
 
 
-update : Msg -> Model -> Model
+update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
-    afterSelection msg model |> handleMatch
+    ( afterSelection msg model |> handleMatch, Cmd.none )
 
 
 afterSelection : Msg -> Model -> Model
@@ -164,7 +175,7 @@ incorrectMatch model =
 
 finished : Model -> Bool
 finished model =
-    List.length model.matches == List.length initialModel.people
+    List.length model.matches == List.length model.people
 
 
 matches : Model -> Html Msg
