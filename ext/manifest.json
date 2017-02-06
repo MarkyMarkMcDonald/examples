@@ -1,0 +1,38 @@
+{
+  "name": "Learning Names Game",
+  "version": "0.0.1",
+  "manifest_version": 2,
+  "description": "For learning names of faces",
+  "homepage_url": "https://github.com/MarkyMarkMcDonald/onboarding-memory-game",
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "default_locale": "en",
+  "browser_action": {
+    "default_icon": "icons/icon19.png",
+    "default_title": "Run the game!",
+    "default_popup": "src/browser_action/browser_action.html"
+  },
+  "permissions": [
+    "http://*/*",
+    "http://*/*"
+  ],
+  "content_scripts": [
+    {
+      "matches": [
+        "https://onboarding.greenhouse.io/directory"
+      ],
+      "css": [
+        "src/inject/inject.css"
+      ],
+      "js": [
+        "js/jquery/jquery.min.js",
+        "src/inject/shuffle.js",
+        "src/inject/elm-game.js",
+        "src/inject/inject.js"
+      ]
+    }
+  ]
+}

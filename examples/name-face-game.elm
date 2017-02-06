@@ -1,8 +1,10 @@
 module Main exposing (..)
 
 import Html exposing (Html, button, div, text, img, br, span)
-import Html.Attributes exposing (src, height, width, class, classList)
+import Html.Attributes exposing (src, height, width, class, classList, id)
 import Html.Events exposing (onClick)
+import Random
+import Random.List
 
 
 main =
@@ -16,14 +18,11 @@ main =
 
 type alias Model =
     { people : List Person
+    , shuffledPeople : List Person
     , selectedName : Maybe PersonId
     , selectedFace : Maybe PersonId
     , matches : List PersonId
     }
-
-
-type alias Matches =
-    List PersonId
 
 
 type alias Person =
@@ -32,6 +31,10 @@ type alias Person =
 
 type alias UnorderedPerson =
     { name : String, faceUrl : String }
+
+
+type alias Matches =
+    List PersonId
 
 
 addIndex : Int -> UnorderedPerson -> Person
@@ -51,25 +54,35 @@ type alias PersonId =
     Int
 
 
-initialModel : { people : List UnorderedPerson } -> ( Model, Cmd msg )
+initialModel : { people : List UnorderedPerson } -> ( Model, Cmd Msg )
 initialModel flags =
+
+    let
+        peepsGenerator = Random.List.shuffle (withOrder flags.people)
+        shufflePeopleCmd = Random.generate ShuffledFaces peepsGenerator
+    in
+
     ( { people = flags.people |> withOrder
+      , shuffledPeople = []
       , selectedName = Nothing
       , selectedFace = Nothing
       , matches = []
       }
-    , Cmd.none
+    , shufflePeopleCmd
     )
 
 
 type Msg
     = ChooseName PersonId
     | ChooseFace PersonId
+    | ShuffledFaces (List Person)
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
-    ( afterSelection msg model |> handleMatch, Cmd.none )
+    case msg of
+        ShuffledFaces people -> ( { model | shuffledPeople = people }, Cmd.none )
+        _ -> ( afterSelection msg model |> handleMatch, Cmd.none )
 
 
 afterSelection : Msg -> Model -> Model
@@ -80,6 +93,8 @@ afterSelection msg model =
 
         ChooseFace personId ->
             selectFace personId model
+
+        _ -> model
 
 
 handleMatch : Model -> Model
@@ -146,13 +161,16 @@ selectedName model =
 view : Model -> Html Msg
 view model =
     div []
-        [ div [] (List.map (nameSelect model) model.people)
+        [ div [] (List.map (faceSelect model model.selectedFace) model.shuffledPeople)
         , br [] []
         , br [] []
         , messageToUser model
         , br [] []
         , br [] []
-        , div [] (List.map (faceSelect model model.selectedFace) model.people)
+        , button [ id "game-restart" ] [ text "New People" ]
+        , br [] []
+        , br [] []
+        , div [] (List.map (nameSelect model) model.people)
         ]
 
 
@@ -160,7 +178,7 @@ messageToUser : Model -> Html Msg
 messageToUser model =
     text <|
         if finished model then
-            "Good Job!"
+            "Nice Job!"
         else if incorrectMatch model then
             "Not a match, try again!"
         else

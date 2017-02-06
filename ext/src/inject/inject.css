@@ -1,0 +1,30 @@
+.name-option {
+    border: black solid 5px;
+    display: inline-block;
+    height: 200px;
+    width: 200px;
+    line-height: 200px;
+    text-align: center;
+}
+
+.face-option {
+    border: black solid 5px;
+    display: inline-block;
+    height: 200px;
+    width: 200px;
+}
+
+.selected {
+    border: red solid 5px;
+}
+
+.matched {
+    border: green solid 5px;
+}
+
+#pre-elm-load-start {
+    position: absolute;
+    left: 10px;
+    top: 75px;
+    z-index: 999999999;
+}
