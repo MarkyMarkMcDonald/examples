@@ -1,5 +1,6 @@
 module NameFace.Domain exposing (..)
 
+
 type alias NameFaceGame =
     { people : List Person
     , shuffledPeople : List Person
@@ -19,5 +20,3 @@ type alias PersonId =
 
 type alias Matches =
     List PersonId
-
-

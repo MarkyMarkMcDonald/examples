@@ -1,6 +1,7 @@
-module NameFace.State exposing (Event (ChooseName, ChooseFace, ShuffledFaces), update)
+module NameFace.State exposing (Event(ChooseName, ChooseFace, ShuffledFaces), update)
 
 import NameFace.Domain exposing (..)
+
 
 type Event
     = ChooseName PersonId
@@ -15,10 +16,11 @@ update msg model =
             ( { model | shuffledPeople = people }, Cmd.none )
 
         ChooseName personId ->
-            (selectName personId model |> handleMatch, Cmd.none)
+            ( selectName personId model |> handleMatch, Cmd.none )
 
         ChooseFace personId ->
-            (selectFace personId model |> handleMatch, Cmd.none)
+            ( selectFace personId model |> handleMatch, Cmd.none )
+
 
 
 -- UNEXPOSED
@@ -79,5 +81,3 @@ selectedName model =
         |> List.filter (\person -> Just person.id == model.selectedName)
         |> List.map (\person -> person.name)
         |> List.head
-
-

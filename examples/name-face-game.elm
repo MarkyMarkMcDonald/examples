@@ -3,7 +3,6 @@ module Main exposing (main)
 import NameFace.Domain exposing (..)
 import NameFace.State exposing (..)
 import NameFace.Rendering exposing (view)
-
 import Random
 import Random.List
 import Html exposing (Html)
@@ -24,20 +23,21 @@ main =
 
 initialize : { people : List UnorderedPerson } -> ( NameFaceGame, Cmd Event )
 initialize flags =
-
     let
-        peopleGenerator = Random.List.shuffle (withOrder flags.people)
-        shufflePeopleCmd = Random.generate ShuffledFaces peopleGenerator
-    in
+        peopleGenerator =
+            Random.List.shuffle (withOrder flags.people)
 
-    ( { people = flags.people |> withOrder
-      , shuffledPeople = []
-      , selectedName = Nothing
-      , selectedFace = Nothing
-      , matches = []
-      }
-    , shufflePeopleCmd
-    )
+        shufflePeopleCmd =
+            Random.generate ShuffledFaces peopleGenerator
+    in
+        ( { people = flags.people |> withOrder
+          , shuffledPeople = []
+          , selectedName = Nothing
+          , selectedFace = Nothing
+          , matches = []
+          }
+        , shufflePeopleCmd
+        )
 
 
 withOrder : List UnorderedPerson -> List Person
