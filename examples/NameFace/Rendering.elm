@@ -1,0 +1,88 @@
+module NameFace.Rendering exposing (view)
+
+import NameFace.Domain exposing (..)
+import NameFace.State exposing (..)
+
+import Html exposing (Html, button, div, text, img, br, span)
+import Html.Attributes exposing (src, height, width, class, classList, id)
+import Html.Events exposing (onClick)
+
+
+view : NameFaceGame -> Html Event
+view model =
+    div []
+        [ div [] (List.map (faceSelect model model.selectedFace) model.shuffledPeople)
+        , br [] []
+        , br [] []
+        , messageToUser model
+        , br [] []
+        , br [] []
+        , button [ id "game-restart" ] [ text "New People" ]
+        , br [] []
+        , br [] []
+        , div [] (List.map (nameSelect model) model.people)
+        ]
+
+
+messageToUser : NameFaceGame -> Html Event
+messageToUser model =
+    text <|
+        if finished model then
+            "Nice Job!"
+        else if incorrectMatch model then
+            "Not a match, try again!"
+        else
+            ""
+
+
+incorrectMatch : NameFaceGame -> Bool
+incorrectMatch model =
+    Maybe.withDefault False <|
+        Maybe.map2 (/=) model.selectedName model.selectedFace
+
+
+finished : NameFaceGame -> Bool
+finished model =
+    List.length model.matches == List.length model.people
+
+
+matches : NameFaceGame -> Html Event
+matches model =
+    text (toString model.matches)
+
+
+nameSelect : NameFaceGame -> Person -> Html Event
+nameSelect model person =
+    div
+        [ onClick (ChooseName person.id)
+        , nameClasses model person.id
+        ]
+        [ text person.name ]
+
+
+nameClasses : NameFaceGame -> PersonId -> Html.Attribute msg
+nameClasses model id =
+    classList
+        [ ( "name-option", True )
+        , ( "selected", Just id == model.selectedName )
+        , ( "matched", List.any ((==) id) model.matches )
+        ]
+
+
+faceSelect : NameFaceGame -> Maybe PersonId -> Person -> Html Event
+faceSelect model selectedId person =
+    img
+        [ onClick (ChooseFace person.id)
+        , src person.faceUrl
+        , faceClasses model.matches selectedId person.id
+        ]
+        []
+
+
+faceClasses : Matches -> Maybe PersonId -> PersonId -> Html.Attribute msg
+faceClasses matches selectedFace id =
+    classList
+        [ ( "face-option", True )
+        , ( "matched", List.any ((==) id) matches )
+        , ( "selected", Just id == selectedFace )
+        ]

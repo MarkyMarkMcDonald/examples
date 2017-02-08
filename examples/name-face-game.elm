@@ -1,65 +1,33 @@
-module Main exposing (..)
+module Main exposing (main)
 
-import Html exposing (Html, button, div, text, img, br, span)
-import Html.Attributes exposing (src, height, width, class, classList, id)
-import Html.Events exposing (onClick)
+import NameFace.Domain exposing (..)
+import NameFace.State exposing (..)
+import NameFace.Rendering exposing (view)
+
 import Random
 import Random.List
-
-
-main =
-    Html.programWithFlags
-        { init = initialModel
-        , view = view
-        , update = update
-        , subscriptions = \_ -> Sub.none
-        }
-
-
-type alias Model =
-    { people : List Person
-    , shuffledPeople : List Person
-    , selectedName : Maybe PersonId
-    , selectedFace : Maybe PersonId
-    , matches : List PersonId
-    }
-
-
-type alias Person =
-    { name : String, faceUrl : String, id : Int }
+import Html exposing (Html)
 
 
 type alias UnorderedPerson =
     { name : String, faceUrl : String }
 
 
-type alias Matches =
-    List PersonId
+main =
+    Html.programWithFlags
+        { init = initialize
+        , view = view
+        , update = update
+        , subscriptions = \_ -> Sub.none
+        }
 
 
-addIndex : Int -> UnorderedPerson -> Person
-addIndex index person =
-    { id = index
-    , name = person.name
-    , faceUrl = person.faceUrl
-    }
-
-
-withOrder : List UnorderedPerson -> List Person
-withOrder people =
-    people |> List.indexedMap addIndex
-
-
-type alias PersonId =
-    Int
-
-
-initialModel : { people : List UnorderedPerson } -> ( Model, Cmd Msg )
-initialModel flags =
+initialize : { people : List UnorderedPerson } -> ( NameFaceGame, Cmd Event )
+initialize flags =
 
     let
-        peepsGenerator = Random.List.shuffle (withOrder flags.people)
-        shufflePeopleCmd = Random.generate ShuffledFaces peepsGenerator
+        peopleGenerator = Random.List.shuffle (withOrder flags.people)
+        shufflePeopleCmd = Random.generate ShuffledFaces peopleGenerator
     in
 
     ( { people = flags.people |> withOrder
@@ -72,167 +40,14 @@ initialModel flags =
     )
 
 
-type Msg
-    = ChooseName PersonId
-    | ChooseFace PersonId
-    | ShuffledFaces (List Person)
+withOrder : List UnorderedPerson -> List Person
+withOrder people =
+    people |> List.indexedMap addIndex
 
 
-update : Msg -> Model -> ( Model, Cmd Msg )
-update msg model =
-    case msg of
-        ShuffledFaces people -> ( { model | shuffledPeople = people }, Cmd.none )
-        _ -> ( afterSelection msg model |> handleMatch, Cmd.none )
-
-
-afterSelection : Msg -> Model -> Model
-afterSelection msg model =
-    case msg of
-        ChooseName personId ->
-            selectName personId model
-
-        ChooseFace personId ->
-            selectFace personId model
-
-        _ -> model
-
-
-handleMatch : Model -> Model
-handleMatch model =
-    matchId model
-        |> Maybe.map (addMatch model)
-        |> Maybe.withDefault model
-
-
-addMatch : Model -> PersonId -> Model
-addMatch model personId =
-    { model
-        | matches = List.append [ personId ] model.matches
-        , selectedName = Nothing
-        , selectedFace = Nothing
+addIndex : Int -> UnorderedPerson -> Person
+addIndex index person =
+    { id = index
+    , name = person.name
+    , faceUrl = person.faceUrl
     }
-
-
-matchId : Model -> Maybe PersonId
-matchId model =
-    if (Maybe.map2 (==) model.selectedFace model.selectedName) |> Maybe.withDefault False then
-        model.selectedFace
-    else
-        Nothing
-
-
-matchesFace : PersonId -> Model -> Bool
-matchesFace id model =
-    Just id == model.selectedFace
-
-
-selectName : PersonId -> Model -> Model
-selectName selected model =
-    if List.any ((==) selected) model.matches then
-        model
-    else if Just selected == model.selectedName then
-        { model | selectedName = Nothing }
-    else
-        { model | selectedName = Just selected }
-
-
-selectFace : PersonId -> Model -> Model
-selectFace selected model =
-    if List.any ((==) selected) model.matches then
-        model
-    else if Just selected == model.selectedFace then
-        { model | selectedFace = Nothing }
-    else
-        { model | selectedFace = Just selected }
-
-
-selectedName : Model -> Maybe String
-selectedName model =
-    model.people
-        |> List.filter (\person -> Just person.id == model.selectedName)
-        |> List.map (\person -> person.name)
-        |> List.head
-
-
-
--- VIEW
-
-
-view : Model -> Html Msg
-view model =
-    div []
-        [ div [] (List.map (faceSelect model model.selectedFace) model.shuffledPeople)
-        , br [] []
-        , br [] []
-        , messageToUser model
-        , br [] []
-        , br [] []
-        , button [ id "game-restart" ] [ text "New People" ]
-        , br [] []
-        , br [] []
-        , div [] (List.map (nameSelect model) model.people)
-        ]
-
-
-messageToUser : Model -> Html Msg
-messageToUser model =
-    text <|
-        if finished model then
-            "Nice Job!"
-        else if incorrectMatch model then
-            "Not a match, try again!"
-        else
-            ""
-
-
-incorrectMatch : Model -> Bool
-incorrectMatch model =
-    Maybe.withDefault False <|
-        Maybe.map2 (/=) model.selectedName model.selectedFace
-
-
-finished : Model -> Bool
-finished model =
-    List.length model.matches == List.length model.people
-
-
-matches : Model -> Html Msg
-matches model =
-    text (toString model.matches)
-
-
-nameSelect : Model -> Person -> Html Msg
-nameSelect model person =
-    div
-        [ onClick (ChooseName person.id)
-        , nameClasses model person.id
-        ]
-        [ text person.name ]
-
-
-nameClasses : Model -> PersonId -> Html.Attribute msg
-nameClasses model id =
-    classList
-        [ ( "name-option", True )
-        , ( "selected", Just id == model.selectedName )
-        , ( "matched", List.any ((==) id) model.matches )
-        ]
-
-
-faceSelect : Model -> Maybe PersonId -> Person -> Html Msg
-faceSelect model selectedId person =
-    img
-        [ onClick (ChooseFace person.id)
-        , src person.faceUrl
-        , faceClasses model.matches selectedId person.id
-        ]
-        []
-
-
-faceClasses : Matches -> Maybe PersonId -> PersonId -> Html.Attribute msg
-faceClasses matches selectedFace id =
-    classList
-        [ ( "face-option", True )
-        , ( "matched", List.any ((==) id) matches )
-        , ( "selected", Just id == selectedFace )
-        ]
