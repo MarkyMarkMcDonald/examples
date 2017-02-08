@@ -2,6 +2,10 @@ module NameFace.Rendering exposing (view)
 
 import NameFace.Domain exposing (..)
 import NameFace.State exposing (..)
+
+
+--
+
 import Html exposing (Html, button, div, text, img, br, span)
 import Html.Attributes exposing (src, height, width, class, classList, id)
 import Html.Events exposing (onClick)
