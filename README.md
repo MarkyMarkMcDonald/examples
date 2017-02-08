@@ -1,13 +1,13 @@
 ## Local Development
 
-Run `elm-reactor` and visit `http://localhost:8000/examples/name-face-game.html` for sample people 
+Run `elm-reactor` and visit `http://localhost:8000/elm/src/local.html` for sample people 
 
 ## Building
 
 Build chrome extension:
 
 ``` 
-elm-make examples/name-face-game.elm --output chrome-extension/src/inject/elm-game.js
+elm-make elm/src/main.elm --output chrome-extension/src/inject/elm-game.js
 ```
 
 ## Elm

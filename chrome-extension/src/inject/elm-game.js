@@ -6920,6 +6920,150 @@ var _elm_lang$core$Json_Decode$bool = _elm_lang$core$Native_Json.decodePrimitive
 var _elm_lang$core$Json_Decode$string = _elm_lang$core$Native_Json.decodePrimitive('string');
 var _elm_lang$core$Json_Decode$Decoder = {ctor: 'Decoder'};
 
+var _elm_lang$elm_architecture_tutorial$NameFace_Domain$NameFaceGame = F5(
+	function (a, b, c, d, e) {
+		return {people: a, shuffledPeople: b, selectedName: c, selectedFace: d, matches: e};
+	});
+var _elm_lang$elm_architecture_tutorial$NameFace_Domain$Person = F3(
+	function (a, b, c) {
+		return {name: a, faceUrl: b, id: c};
+	});
+
+var _elm_lang$elm_architecture_tutorial$NameFace_State$selectedName = function (model) {
+	return _elm_lang$core$List$head(
+		A2(
+			_elm_lang$core$List$map,
+			function (person) {
+				return person.name;
+			},
+			A2(
+				_elm_lang$core$List$filter,
+				function (person) {
+					return _elm_lang$core$Native_Utils.eq(
+						_elm_lang$core$Maybe$Just(person.id),
+						model.selectedName);
+				},
+				model.people)));
+};
+var _elm_lang$elm_architecture_tutorial$NameFace_State$selectFace = F2(
+	function (selected, model) {
+		return A2(
+			_elm_lang$core$List$any,
+			F2(
+				function (x, y) {
+					return _elm_lang$core$Native_Utils.eq(x, y);
+				})(selected),
+			model.matches) ? model : (_elm_lang$core$Native_Utils.eq(
+			_elm_lang$core$Maybe$Just(selected),
+			model.selectedFace) ? _elm_lang$core$Native_Utils.update(
+			model,
+			{selectedFace: _elm_lang$core$Maybe$Nothing}) : _elm_lang$core$Native_Utils.update(
+			model,
+			{
+				selectedFace: _elm_lang$core$Maybe$Just(selected)
+			}));
+	});
+var _elm_lang$elm_architecture_tutorial$NameFace_State$selectName = F2(
+	function (selected, model) {
+		return A2(
+			_elm_lang$core$List$any,
+			F2(
+				function (x, y) {
+					return _elm_lang$core$Native_Utils.eq(x, y);
+				})(selected),
+			model.matches) ? model : (_elm_lang$core$Native_Utils.eq(
+			_elm_lang$core$Maybe$Just(selected),
+			model.selectedName) ? _elm_lang$core$Native_Utils.update(
+			model,
+			{selectedName: _elm_lang$core$Maybe$Nothing}) : _elm_lang$core$Native_Utils.update(
+			model,
+			{
+				selectedName: _elm_lang$core$Maybe$Just(selected)
+			}));
+	});
+var _elm_lang$elm_architecture_tutorial$NameFace_State$matchesFace = F2(
+	function (id, model) {
+		return _elm_lang$core$Native_Utils.eq(
+			_elm_lang$core$Maybe$Just(id),
+			model.selectedFace);
+	});
+var _elm_lang$elm_architecture_tutorial$NameFace_State$nameFaceMatchId = function (model) {
+	return A2(
+		_elm_lang$core$Maybe$withDefault,
+		false,
+		A3(
+			_elm_lang$core$Maybe$map2,
+			F2(
+				function (x, y) {
+					return _elm_lang$core$Native_Utils.eq(x, y);
+				}),
+			model.selectedFace,
+			model.selectedName)) ? model.selectedFace : _elm_lang$core$Maybe$Nothing;
+};
+var _elm_lang$elm_architecture_tutorial$NameFace_State$addMatch = F2(
+	function (model, personId) {
+		return _elm_lang$core$Native_Utils.update(
+			model,
+			{
+				matches: A2(
+					_elm_lang$core$List$append,
+					{
+						ctor: '::',
+						_0: personId,
+						_1: {ctor: '[]'}
+					},
+					model.matches),
+				selectedName: _elm_lang$core$Maybe$Nothing,
+				selectedFace: _elm_lang$core$Maybe$Nothing
+			});
+	});
+var _elm_lang$elm_architecture_tutorial$NameFace_State$handleMatch = function (model) {
+	return A2(
+		_elm_lang$core$Maybe$withDefault,
+		model,
+		A2(
+			_elm_lang$core$Maybe$map,
+			_elm_lang$elm_architecture_tutorial$NameFace_State$addMatch(model),
+			_elm_lang$elm_architecture_tutorial$NameFace_State$nameFaceMatchId(model)));
+};
+var _elm_lang$elm_architecture_tutorial$NameFace_State$update = F2(
+	function (msg, model) {
+		var _p0 = msg;
+		switch (_p0.ctor) {
+			case 'ShuffledFaces':
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{shuffledPeople: _p0._0}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+			case 'ChooseName':
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$elm_architecture_tutorial$NameFace_State$handleMatch(
+						A2(_elm_lang$elm_architecture_tutorial$NameFace_State$selectName, _p0._0, model)),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+			default:
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$elm_architecture_tutorial$NameFace_State$handleMatch(
+						A2(_elm_lang$elm_architecture_tutorial$NameFace_State$selectFace, _p0._0, model)),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+		}
+	});
+var _elm_lang$elm_architecture_tutorial$NameFace_State$ShuffledFaces = function (a) {
+	return {ctor: 'ShuffledFaces', _0: a};
+};
+var _elm_lang$elm_architecture_tutorial$NameFace_State$ChooseFace = function (a) {
+	return {ctor: 'ChooseFace', _0: a};
+};
+var _elm_lang$elm_architecture_tutorial$NameFace_State$ChooseName = function (a) {
+	return {ctor: 'ChooseName', _0: a};
+};
+
 var _elm_lang$virtual_dom$VirtualDom_Debug$wrap;
 var _elm_lang$virtual_dom$VirtualDom_Debug$wrapWithFlags;
 
@@ -9423,7 +9567,7 @@ var _elm_lang$html$Html_Events$Options = F2(
 		return {stopPropagation: a, preventDefault: b};
 	});
 
-var _elm_lang$elm_architecture_tutorial$Main$faceClasses = F3(
+var _elm_lang$elm_architecture_tutorial$NameFace_Rendering$faceClasses = F3(
 	function (matches, selectedFace, id) {
 		return _elm_lang$html$Html_Attributes$classList(
 			{
@@ -9456,7 +9600,27 @@ var _elm_lang$elm_architecture_tutorial$Main$faceClasses = F3(
 				}
 			});
 	});
-var _elm_lang$elm_architecture_tutorial$Main$nameClasses = F2(
+var _elm_lang$elm_architecture_tutorial$NameFace_Rendering$faceSelect = F3(
+	function (model, selectedId, person) {
+		return A2(
+			_elm_lang$html$Html$img,
+			{
+				ctor: '::',
+				_0: _elm_lang$html$Html_Events$onClick(
+					_elm_lang$elm_architecture_tutorial$NameFace_State$ChooseFace(person.id)),
+				_1: {
+					ctor: '::',
+					_0: _elm_lang$html$Html_Attributes$src(person.faceUrl),
+					_1: {
+						ctor: '::',
+						_0: A3(_elm_lang$elm_architecture_tutorial$NameFace_Rendering$faceClasses, model.matches, selectedId, person.id),
+						_1: {ctor: '[]'}
+					}
+				}
+			},
+			{ctor: '[]'});
+	});
+var _elm_lang$elm_architecture_tutorial$NameFace_Rendering$nameClasses = F2(
 	function (model, id) {
 		return _elm_lang$html$Html_Attributes$classList(
 			{
@@ -9489,16 +9653,36 @@ var _elm_lang$elm_architecture_tutorial$Main$nameClasses = F2(
 				}
 			});
 	});
-var _elm_lang$elm_architecture_tutorial$Main$matches = function (model) {
+var _elm_lang$elm_architecture_tutorial$NameFace_Rendering$nameSelect = F2(
+	function (model, person) {
+		return A2(
+			_elm_lang$html$Html$div,
+			{
+				ctor: '::',
+				_0: _elm_lang$html$Html_Events$onClick(
+					_elm_lang$elm_architecture_tutorial$NameFace_State$ChooseName(person.id)),
+				_1: {
+					ctor: '::',
+					_0: A2(_elm_lang$elm_architecture_tutorial$NameFace_Rendering$nameClasses, model, person.id),
+					_1: {ctor: '[]'}
+				}
+			},
+			{
+				ctor: '::',
+				_0: _elm_lang$html$Html$text(person.name),
+				_1: {ctor: '[]'}
+			});
+	});
+var _elm_lang$elm_architecture_tutorial$NameFace_Rendering$matches = function (model) {
 	return _elm_lang$html$Html$text(
 		_elm_lang$core$Basics$toString(model.matches));
 };
-var _elm_lang$elm_architecture_tutorial$Main$finished = function (model) {
+var _elm_lang$elm_architecture_tutorial$NameFace_Rendering$finished = function (model) {
 	return _elm_lang$core$Native_Utils.eq(
 		_elm_lang$core$List$length(model.matches),
 		_elm_lang$core$List$length(model.people));
 };
-var _elm_lang$elm_architecture_tutorial$Main$incorrectMatch = function (model) {
+var _elm_lang$elm_architecture_tutorial$NameFace_Rendering$incorrectMatch = function (model) {
 	return A2(
 		_elm_lang$core$Maybe$withDefault,
 		false,
@@ -9511,224 +9695,11 @@ var _elm_lang$elm_architecture_tutorial$Main$incorrectMatch = function (model) {
 			model.selectedName,
 			model.selectedFace));
 };
-var _elm_lang$elm_architecture_tutorial$Main$messageToUser = function (model) {
+var _elm_lang$elm_architecture_tutorial$NameFace_Rendering$messageToUser = function (model) {
 	return _elm_lang$html$Html$text(
-		_elm_lang$elm_architecture_tutorial$Main$finished(model) ? 'Nice Job!' : (_elm_lang$elm_architecture_tutorial$Main$incorrectMatch(model) ? 'Not a match, try again!' : ''));
+		_elm_lang$elm_architecture_tutorial$NameFace_Rendering$finished(model) ? 'Nice Job!' : (_elm_lang$elm_architecture_tutorial$NameFace_Rendering$incorrectMatch(model) ? 'Not a match, try again!' : ''));
 };
-var _elm_lang$elm_architecture_tutorial$Main$selectedName = function (model) {
-	return _elm_lang$core$List$head(
-		A2(
-			_elm_lang$core$List$map,
-			function (person) {
-				return person.name;
-			},
-			A2(
-				_elm_lang$core$List$filter,
-				function (person) {
-					return _elm_lang$core$Native_Utils.eq(
-						_elm_lang$core$Maybe$Just(person.id),
-						model.selectedName);
-				},
-				model.people)));
-};
-var _elm_lang$elm_architecture_tutorial$Main$selectFace = F2(
-	function (selected, model) {
-		return A2(
-			_elm_lang$core$List$any,
-			F2(
-				function (x, y) {
-					return _elm_lang$core$Native_Utils.eq(x, y);
-				})(selected),
-			model.matches) ? model : (_elm_lang$core$Native_Utils.eq(
-			_elm_lang$core$Maybe$Just(selected),
-			model.selectedFace) ? _elm_lang$core$Native_Utils.update(
-			model,
-			{selectedFace: _elm_lang$core$Maybe$Nothing}) : _elm_lang$core$Native_Utils.update(
-			model,
-			{
-				selectedFace: _elm_lang$core$Maybe$Just(selected)
-			}));
-	});
-var _elm_lang$elm_architecture_tutorial$Main$selectName = F2(
-	function (selected, model) {
-		return A2(
-			_elm_lang$core$List$any,
-			F2(
-				function (x, y) {
-					return _elm_lang$core$Native_Utils.eq(x, y);
-				})(selected),
-			model.matches) ? model : (_elm_lang$core$Native_Utils.eq(
-			_elm_lang$core$Maybe$Just(selected),
-			model.selectedName) ? _elm_lang$core$Native_Utils.update(
-			model,
-			{selectedName: _elm_lang$core$Maybe$Nothing}) : _elm_lang$core$Native_Utils.update(
-			model,
-			{
-				selectedName: _elm_lang$core$Maybe$Just(selected)
-			}));
-	});
-var _elm_lang$elm_architecture_tutorial$Main$matchesFace = F2(
-	function (id, model) {
-		return _elm_lang$core$Native_Utils.eq(
-			_elm_lang$core$Maybe$Just(id),
-			model.selectedFace);
-	});
-var _elm_lang$elm_architecture_tutorial$Main$matchId = function (model) {
-	return A2(
-		_elm_lang$core$Maybe$withDefault,
-		false,
-		A3(
-			_elm_lang$core$Maybe$map2,
-			F2(
-				function (x, y) {
-					return _elm_lang$core$Native_Utils.eq(x, y);
-				}),
-			model.selectedFace,
-			model.selectedName)) ? model.selectedFace : _elm_lang$core$Maybe$Nothing;
-};
-var _elm_lang$elm_architecture_tutorial$Main$addMatch = F2(
-	function (model, personId) {
-		return _elm_lang$core$Native_Utils.update(
-			model,
-			{
-				matches: A2(
-					_elm_lang$core$List$append,
-					{
-						ctor: '::',
-						_0: personId,
-						_1: {ctor: '[]'}
-					},
-					model.matches),
-				selectedName: _elm_lang$core$Maybe$Nothing,
-				selectedFace: _elm_lang$core$Maybe$Nothing
-			});
-	});
-var _elm_lang$elm_architecture_tutorial$Main$handleMatch = function (model) {
-	return A2(
-		_elm_lang$core$Maybe$withDefault,
-		model,
-		A2(
-			_elm_lang$core$Maybe$map,
-			_elm_lang$elm_architecture_tutorial$Main$addMatch(model),
-			_elm_lang$elm_architecture_tutorial$Main$matchId(model)));
-};
-var _elm_lang$elm_architecture_tutorial$Main$afterSelection = F2(
-	function (msg, model) {
-		var _p0 = msg;
-		switch (_p0.ctor) {
-			case 'ChooseName':
-				return A2(_elm_lang$elm_architecture_tutorial$Main$selectName, _p0._0, model);
-			case 'ChooseFace':
-				return A2(_elm_lang$elm_architecture_tutorial$Main$selectFace, _p0._0, model);
-			default:
-				return model;
-		}
-	});
-var _elm_lang$elm_architecture_tutorial$Main$update = F2(
-	function (msg, model) {
-		var _p1 = msg;
-		if (_p1.ctor === 'ShuffledFaces') {
-			return {
-				ctor: '_Tuple2',
-				_0: _elm_lang$core$Native_Utils.update(
-					model,
-					{shuffledPeople: _p1._0}),
-				_1: _elm_lang$core$Platform_Cmd$none
-			};
-		} else {
-			return {
-				ctor: '_Tuple2',
-				_0: _elm_lang$elm_architecture_tutorial$Main$handleMatch(
-					A2(_elm_lang$elm_architecture_tutorial$Main$afterSelection, msg, model)),
-				_1: _elm_lang$core$Platform_Cmd$none
-			};
-		}
-	});
-var _elm_lang$elm_architecture_tutorial$Main$addIndex = F2(
-	function (index, person) {
-		return {id: index, name: person.name, faceUrl: person.faceUrl};
-	});
-var _elm_lang$elm_architecture_tutorial$Main$withOrder = function (people) {
-	return A2(_elm_lang$core$List$indexedMap, _elm_lang$elm_architecture_tutorial$Main$addIndex, people);
-};
-var _elm_lang$elm_architecture_tutorial$Main$Model = F5(
-	function (a, b, c, d, e) {
-		return {people: a, shuffledPeople: b, selectedName: c, selectedFace: d, matches: e};
-	});
-var _elm_lang$elm_architecture_tutorial$Main$Person = F3(
-	function (a, b, c) {
-		return {name: a, faceUrl: b, id: c};
-	});
-var _elm_lang$elm_architecture_tutorial$Main$UnorderedPerson = F2(
-	function (a, b) {
-		return {name: a, faceUrl: b};
-	});
-var _elm_lang$elm_architecture_tutorial$Main$ShuffledFaces = function (a) {
-	return {ctor: 'ShuffledFaces', _0: a};
-};
-var _elm_lang$elm_architecture_tutorial$Main$initialModel = function (flags) {
-	var peepsGenerator = _elm_community$random_extra$Random_List$shuffle(
-		_elm_lang$elm_architecture_tutorial$Main$withOrder(flags.people));
-	var shufflePeopleCmd = A2(_elm_lang$core$Random$generate, _elm_lang$elm_architecture_tutorial$Main$ShuffledFaces, peepsGenerator);
-	return {
-		ctor: '_Tuple2',
-		_0: {
-			people: _elm_lang$elm_architecture_tutorial$Main$withOrder(flags.people),
-			shuffledPeople: {ctor: '[]'},
-			selectedName: _elm_lang$core$Maybe$Nothing,
-			selectedFace: _elm_lang$core$Maybe$Nothing,
-			matches: {ctor: '[]'}
-		},
-		_1: shufflePeopleCmd
-	};
-};
-var _elm_lang$elm_architecture_tutorial$Main$ChooseFace = function (a) {
-	return {ctor: 'ChooseFace', _0: a};
-};
-var _elm_lang$elm_architecture_tutorial$Main$faceSelect = F3(
-	function (model, selectedId, person) {
-		return A2(
-			_elm_lang$html$Html$img,
-			{
-				ctor: '::',
-				_0: _elm_lang$html$Html_Events$onClick(
-					_elm_lang$elm_architecture_tutorial$Main$ChooseFace(person.id)),
-				_1: {
-					ctor: '::',
-					_0: _elm_lang$html$Html_Attributes$src(person.faceUrl),
-					_1: {
-						ctor: '::',
-						_0: A3(_elm_lang$elm_architecture_tutorial$Main$faceClasses, model.matches, selectedId, person.id),
-						_1: {ctor: '[]'}
-					}
-				}
-			},
-			{ctor: '[]'});
-	});
-var _elm_lang$elm_architecture_tutorial$Main$ChooseName = function (a) {
-	return {ctor: 'ChooseName', _0: a};
-};
-var _elm_lang$elm_architecture_tutorial$Main$nameSelect = F2(
-	function (model, person) {
-		return A2(
-			_elm_lang$html$Html$div,
-			{
-				ctor: '::',
-				_0: _elm_lang$html$Html_Events$onClick(
-					_elm_lang$elm_architecture_tutorial$Main$ChooseName(person.id)),
-				_1: {
-					ctor: '::',
-					_0: A2(_elm_lang$elm_architecture_tutorial$Main$nameClasses, model, person.id),
-					_1: {ctor: '[]'}
-				}
-			},
-			{
-				ctor: '::',
-				_0: _elm_lang$html$Html$text(person.name),
-				_1: {ctor: '[]'}
-			});
-	});
-var _elm_lang$elm_architecture_tutorial$Main$view = function (model) {
+var _elm_lang$elm_architecture_tutorial$NameFace_Rendering$view = function (model) {
 	return A2(
 		_elm_lang$html$Html$div,
 		{ctor: '[]'},
@@ -9739,7 +9710,7 @@ var _elm_lang$elm_architecture_tutorial$Main$view = function (model) {
 				{ctor: '[]'},
 				A2(
 					_elm_lang$core$List$map,
-					A2(_elm_lang$elm_architecture_tutorial$Main$faceSelect, model, model.selectedFace),
+					A2(_elm_lang$elm_architecture_tutorial$NameFace_Rendering$faceSelect, model, model.selectedFace),
 					model.shuffledPeople)),
 			_1: {
 				ctor: '::',
@@ -9755,7 +9726,7 @@ var _elm_lang$elm_architecture_tutorial$Main$view = function (model) {
 						{ctor: '[]'}),
 					_1: {
 						ctor: '::',
-						_0: _elm_lang$elm_architecture_tutorial$Main$messageToUser(model),
+						_0: _elm_lang$elm_architecture_tutorial$NameFace_Rendering$messageToUser(model),
 						_1: {
 							ctor: '::',
 							_0: A2(
@@ -9801,7 +9772,7 @@ var _elm_lang$elm_architecture_tutorial$Main$view = function (model) {
 													{ctor: '[]'},
 													A2(
 														_elm_lang$core$List$map,
-														_elm_lang$elm_architecture_tutorial$Main$nameSelect(model),
+														_elm_lang$elm_architecture_tutorial$NameFace_Rendering$nameSelect(model),
 														model.people)),
 												_1: {ctor: '[]'}
 											}
@@ -9815,12 +9786,36 @@ var _elm_lang$elm_architecture_tutorial$Main$view = function (model) {
 			}
 		});
 };
+
+var _elm_lang$elm_architecture_tutorial$Main$addIndex = F2(
+	function (index, person) {
+		return {id: index, name: person.name, faceUrl: person.faceUrl};
+	});
+var _elm_lang$elm_architecture_tutorial$Main$withOrder = function (people) {
+	return A2(_elm_lang$core$List$indexedMap, _elm_lang$elm_architecture_tutorial$Main$addIndex, people);
+};
+var _elm_lang$elm_architecture_tutorial$Main$initialize = function (flags) {
+	var peopleGenerator = _elm_community$random_extra$Random_List$shuffle(
+		_elm_lang$elm_architecture_tutorial$Main$withOrder(flags.people));
+	var shufflePeopleCmd = A2(_elm_lang$core$Random$generate, _elm_lang$elm_architecture_tutorial$NameFace_State$ShuffledFaces, peopleGenerator);
+	return {
+		ctor: '_Tuple2',
+		_0: {
+			people: _elm_lang$elm_architecture_tutorial$Main$withOrder(flags.people),
+			shuffledPeople: {ctor: '[]'},
+			selectedName: _elm_lang$core$Maybe$Nothing,
+			selectedFace: _elm_lang$core$Maybe$Nothing,
+			matches: {ctor: '[]'}
+		},
+		_1: shufflePeopleCmd
+	};
+};
 var _elm_lang$elm_architecture_tutorial$Main$main = _elm_lang$html$Html$programWithFlags(
 	{
-		init: _elm_lang$elm_architecture_tutorial$Main$initialModel,
-		view: _elm_lang$elm_architecture_tutorial$Main$view,
-		update: _elm_lang$elm_architecture_tutorial$Main$update,
-		subscriptions: function (_p2) {
+		init: _elm_lang$elm_architecture_tutorial$Main$initialize,
+		view: _elm_lang$elm_architecture_tutorial$NameFace_Rendering$view,
+		update: _elm_lang$elm_architecture_tutorial$NameFace_State$update,
+		subscriptions: function (_p0) {
 			return _elm_lang$core$Platform_Sub$none;
 		}
 	})(
@@ -9846,6 +9841,10 @@ var _elm_lang$elm_architecture_tutorial$Main$main = _elm_lang$html$Html$programW
 							A2(_elm_lang$core$Json_Decode$field, 'name', _elm_lang$core$Json_Decode$string));
 					},
 					A2(_elm_lang$core$Json_Decode$field, 'faceUrl', _elm_lang$core$Json_Decode$string))))));
+var _elm_lang$elm_architecture_tutorial$Main$UnorderedPerson = F2(
+	function (a, b) {
+		return {name: a, faceUrl: b};
+	});
 
 var Elm = {};
 Elm['Main'] = Elm['Main'] || {};
