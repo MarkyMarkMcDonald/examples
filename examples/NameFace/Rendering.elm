@@ -24,6 +24,9 @@ view model =
         ]
 
 
+-- UNEXPOSED
+
+
 messageToUser : NameFaceGame -> Html Event
 messageToUser model =
     text <|

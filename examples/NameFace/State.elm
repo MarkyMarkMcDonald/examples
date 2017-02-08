@@ -21,6 +21,9 @@ update msg model =
             (selectFace personId model |> handleMatch, Cmd.none)
 
 
+-- UNEXPOSED
+
+
 handleMatch : NameFaceGame -> NameFaceGame
 handleMatch model =
     nameFaceMatchId model
