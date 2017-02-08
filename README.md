@@ -1,19 +1,15 @@
-# Elm
+## Local Development
 
-Elm is a programming language that compiles to JavaScript. The highlight features are great performance and no runtime exceptions. You can read more about all that on the [home page](http://elm-lang.org/). Elm also has its own virtual DOM implementation that is [very fast](http://elm-lang.org/blog/blazing-fast-html-round-two) compared to React, Angular, and Ember.
+Run `elm-reactor` and visit `http://localhost:8000/examples/name-face-game.html` for sample people 
 
-This repo contains a game to help learn names and elm examples to refer back to while developing.
+## Building
 
-## Run The Memory Game and Elm Examples
+Build chrome extension:
 
-After you [install Elm](http://guide.elm-lang.org/get_started.html), run the following commands in your terminal to download this repo and start a server that compiles Elm for you:
-
-```bash
-git clone https://github.com/MarkyMarkMcDonald/onboarding-memory-game
-cd onboarding-memory-game
-elm-reactor
+``` 
+elm-make examples/name-face-game.elm --output chrome-extension/src/inject/elm-game.js
 ```
 
-Now go to [http://localhost:8000/](http://localhost:8000/) and start looking at the `examples/` directory. When you edit an Elm file, just refresh the corresponding page in your browser and it will recompile!
+## Elm
 
-The memory game is at [http://localhost:8000/examples/name-face-game.html](http://localhost:8000/examples/name-face-game.html)
+[Installing](http://guide.elm-lang.org/get_started.html)
