@@ -14,7 +14,7 @@ import Html.Events exposing (onClick)
 view : NameFaceGame -> Html Event
 view model =
     div []
-        [ div [] (List.map (faceSelect model model.selectedFace) model.shuffledPeople)
+        [ div [] (List.map (faceSelect model model.selectedFace) model.faces)
         , br [] []
         , br [] []
         , messageToUser model
@@ -23,7 +23,7 @@ view model =
         , button [ id "game-restart" ] [ text "New People" ]
         , br [] []
         , br [] []
-        , div [] (List.map (nameSelect model) model.people)
+        , div [] (List.map (nameSelect model) model.names)
         ]
 
 
@@ -50,7 +50,7 @@ incorrectMatch model =
 
 finished : NameFaceGame -> Bool
 finished model =
-    List.length model.matches == List.length model.people
+    List.length model.matches == model.matchesRequired
 
 
 matches : NameFaceGame -> Html Event
@@ -58,7 +58,7 @@ matches model =
     text (toString model.matches)
 
 
-nameSelect : NameFaceGame -> Person -> Html Event
+nameSelect : NameFaceGame -> WithName a -> Html Event
 nameSelect model person =
     div
         [ onClick (ChooseName person.id)
@@ -76,7 +76,7 @@ nameClasses model id =
         ]
 
 
-faceSelect : NameFaceGame -> Maybe PersonId -> Person -> Html Event
+faceSelect : NameFaceGame -> Maybe PersonId -> WithFace a -> Html Event
 faceSelect model selectedId person =
     img
         [ onClick (ChooseFace person.id)

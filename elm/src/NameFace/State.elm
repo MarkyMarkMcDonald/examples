@@ -1,19 +1,33 @@
-module NameFace.State exposing (Event(ChooseName, ChooseFace, ShuffledFaces), update)
+module NameFace.State exposing (Event(ChooseName, ChooseFace, NewGame, PeopleShuffled), update)
 
 import NameFace.Domain exposing (..)
+import Random
+import Random.List
 
 
 type Event
     = ChooseName PersonId
     | ChooseFace PersonId
-    | ShuffledFaces (List Person)
+    | NewGame (List Person)
+    | PeopleShuffled (List Person)
+    | FacesShuffled (List (WithFace {}))
+    | NamesShuffled (List (WithName {}))
 
 
 update : Event -> NameFaceGame -> ( NameFaceGame, Cmd Event )
 update msg model =
     case msg of
-        ShuffledFaces people ->
-            ( { model | shuffledPeople = people }, Cmd.none )
+        NewGame people ->
+            ( { model | people = people }, Random.generate PeopleShuffled <| (Random.List.shuffle people) )
+
+        PeopleShuffled people ->
+            ( { model | people = people }, Random.generate FacesShuffled <| Random.List.shuffle (people |> List.take model.matchesRequired |> List.map toFace) )
+
+        FacesShuffled faces ->
+            ( { model | faces = faces }, Random.generate NamesShuffled <| Random.List.shuffle (model.people |> List.take model.matchesRequired |> List.map toName) )
+
+        NamesShuffled names ->
+            ( { model | names = names }, Cmd.none )
 
         ChooseName personId ->
             ( selectName personId model |> handleMatch, Cmd.none )

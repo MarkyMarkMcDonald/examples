@@ -27,21 +27,16 @@ main =
 
 initialize : { people : List UnorderedPerson } -> ( NameFaceGame, Cmd Event )
 initialize flags =
-    let
-        peopleGenerator =
-            Random.List.shuffle (withOrder flags.people)
-
-        shufflePeopleCmd =
-            Random.generate ShuffledFaces peopleGenerator
-    in
-        ( { people = flags.people |> withOrder
-          , shuffledPeople = []
-          , selectedName = Nothing
-          , selectedFace = Nothing
-          , matches = []
-          }
-        , shufflePeopleCmd
-        )
+    ( { people = []
+      , names = []
+      , faces = []
+      , selectedName = Nothing
+      , selectedFace = Nothing
+      , matches = []
+      , matchesRequired = 6
+      }
+    , Random.generate PeopleShuffled (Random.List.shuffle (withOrder flags.people))
+    )
 
 
 withOrder : List UnorderedPerson -> List Person
