@@ -6928,9 +6928,9 @@ var _elm_lang$elm_architecture_tutorial$NameFace_Domain$toFace = function (_p2) 
 	var _p3 = _p2;
 	return {faceUrl: _p3.faceUrl, id: _p3.id};
 };
-var _elm_lang$elm_architecture_tutorial$NameFace_Domain$NameFaceGame = F7(
-	function (a, b, c, d, e, f, g) {
-		return {people: a, matchesRequired: b, faces: c, names: d, selectedName: e, selectedFace: f, matches: g};
+var _elm_lang$elm_architecture_tutorial$NameFace_Domain$NameFaceGame = F8(
+	function (a, b, c, d, e, f, g, h) {
+		return {people: a, matchesRequired: b, faces: c, names: d, selectedName: e, selectedFace: f, matches: g, combo: h};
 	});
 var _elm_lang$elm_architecture_tutorial$NameFace_Domain$Person = F3(
 	function (a, b, c) {
@@ -7022,9 +7022,30 @@ var _elm_lang$elm_architecture_tutorial$NameFace_State$addMatch = F2(
 					},
 					model.matches),
 				selectedName: _elm_lang$core$Maybe$Nothing,
-				selectedFace: _elm_lang$core$Maybe$Nothing
+				selectedFace: _elm_lang$core$Maybe$Nothing,
+				combo: model.combo + 1
 			});
 	});
+var _elm_lang$elm_architecture_tutorial$NameFace_State$matchAttempted = function (model) {
+	return A2(
+		_elm_lang$core$Maybe$withDefault,
+		false,
+		A3(
+			_elm_lang$core$Maybe$map2,
+			F2(
+				function (_p1, _p0) {
+					return true;
+				}),
+			model.selectedFace,
+			model.selectedName));
+};
+var _elm_lang$elm_architecture_tutorial$NameFace_State$handleMisMatch = function (model) {
+	return (_elm_lang$elm_architecture_tutorial$NameFace_State$matchAttempted(model) && (!_elm_lang$core$Native_Utils.eq(model.selectedFace, model.selectedName))) ? _elm_lang$core$Native_Utils.update(
+		model,
+		{
+			combo: A2(_elm_lang$core$Basics$max, 0, model.combo - 1)
+		}) : model;
+};
 var _elm_lang$elm_architecture_tutorial$NameFace_State$handleMatch = function (model) {
 	return A2(
 		_elm_lang$core$Maybe$withDefault,
@@ -7045,27 +7066,30 @@ var _elm_lang$elm_architecture_tutorial$NameFace_State$PeopleShuffled = function
 };
 var _elm_lang$elm_architecture_tutorial$NameFace_State$update = F2(
 	function (msg, model) {
-		var _p0 = msg;
-		switch (_p0.ctor) {
+		var _p2 = msg;
+		switch (_p2.ctor) {
 			case 'NewGame':
-				var _p1 = _p0._0;
+				var _p3 = _p2._0;
 				return {
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
 						model,
-						{people: _p1}),
+						{
+							people: _p3,
+							matches: {ctor: '[]'}
+						}),
 					_1: A2(
 						_elm_lang$core$Random$generate,
 						_elm_lang$elm_architecture_tutorial$NameFace_State$PeopleShuffled,
-						_elm_community$random_extra$Random_List$shuffle(_p1))
+						_elm_community$random_extra$Random_List$shuffle(_p3))
 				};
 			case 'PeopleShuffled':
-				var _p2 = _p0._0;
+				var _p4 = _p2._0;
 				return {
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
 						model,
-						{people: _p2}),
+						{people: _p4}),
 					_1: A2(
 						_elm_lang$core$Random$generate,
 						_elm_lang$elm_architecture_tutorial$NameFace_State$FacesShuffled,
@@ -7073,14 +7097,14 @@ var _elm_lang$elm_architecture_tutorial$NameFace_State$update = F2(
 							A2(
 								_elm_lang$core$List$map,
 								_elm_lang$elm_architecture_tutorial$NameFace_Domain$toFace,
-								A2(_elm_lang$core$List$take, model.matchesRequired, _p2))))
+								A2(_elm_lang$core$List$take, model.matchesRequired, _p4))))
 				};
 			case 'FacesShuffled':
 				return {
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
 						model,
-						{faces: _p0._0}),
+						{faces: _p2._0}),
 					_1: A2(
 						_elm_lang$core$Random$generate,
 						_elm_lang$elm_architecture_tutorial$NameFace_State$NamesShuffled,
@@ -7095,21 +7119,23 @@ var _elm_lang$elm_architecture_tutorial$NameFace_State$update = F2(
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
 						model,
-						{names: _p0._0}),
+						{names: _p2._0}),
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
 			case 'ChooseName':
 				return {
 					ctor: '_Tuple2',
-					_0: _elm_lang$elm_architecture_tutorial$NameFace_State$handleMatch(
-						A2(_elm_lang$elm_architecture_tutorial$NameFace_State$selectName, _p0._0, model)),
+					_0: _elm_lang$elm_architecture_tutorial$NameFace_State$handleMisMatch(
+						_elm_lang$elm_architecture_tutorial$NameFace_State$handleMatch(
+							A2(_elm_lang$elm_architecture_tutorial$NameFace_State$selectName, _p2._0, model))),
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
 			default:
 				return {
 					ctor: '_Tuple2',
-					_0: _elm_lang$elm_architecture_tutorial$NameFace_State$handleMatch(
-						A2(_elm_lang$elm_architecture_tutorial$NameFace_State$selectFace, _p0._0, model)),
+					_0: _elm_lang$elm_architecture_tutorial$NameFace_State$handleMisMatch(
+						_elm_lang$elm_architecture_tutorial$NameFace_State$handleMatch(
+							A2(_elm_lang$elm_architecture_tutorial$NameFace_State$selectFace, _p2._0, model))),
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
 		}
@@ -9802,16 +9828,15 @@ var _elm_lang$elm_architecture_tutorial$NameFace_Rendering$view = function (mode
 								_1: {
 									ctor: '::',
 									_0: A2(
-										_elm_lang$html$Html$button,
+										_elm_lang$html$Html$div,
+										{ctor: '[]'},
 										{
 											ctor: '::',
-											_0: _elm_lang$html$Html_Events$onClick(
-												_elm_lang$elm_architecture_tutorial$NameFace_State$NewGame(model.people)),
-											_1: {ctor: '[]'}
-										},
-										{
-											ctor: '::',
-											_0: _elm_lang$html$Html$text('New People'),
+											_0: _elm_lang$html$Html$text(
+												A2(
+													_elm_lang$core$Basics_ops['++'],
+													'Combo: ',
+													_elm_lang$core$Basics$toString(model.combo))),
 											_1: {ctor: '[]'}
 										}),
 									_1: {
@@ -9829,13 +9854,43 @@ var _elm_lang$elm_architecture_tutorial$NameFace_Rendering$view = function (mode
 											_1: {
 												ctor: '::',
 												_0: A2(
-													_elm_lang$html$Html$div,
-													{ctor: '[]'},
-													A2(
-														_elm_lang$core$List$map,
-														_elm_lang$elm_architecture_tutorial$NameFace_Rendering$nameSelect(model),
-														model.names)),
-												_1: {ctor: '[]'}
+													_elm_lang$html$Html$button,
+													{
+														ctor: '::',
+														_0: _elm_lang$html$Html_Events$onClick(
+															_elm_lang$elm_architecture_tutorial$NameFace_State$NewGame(model.people)),
+														_1: {ctor: '[]'}
+													},
+													{
+														ctor: '::',
+														_0: _elm_lang$html$Html$text('New People'),
+														_1: {ctor: '[]'}
+													}),
+												_1: {
+													ctor: '::',
+													_0: A2(
+														_elm_lang$html$Html$br,
+														{ctor: '[]'},
+														{ctor: '[]'}),
+													_1: {
+														ctor: '::',
+														_0: A2(
+															_elm_lang$html$Html$br,
+															{ctor: '[]'},
+															{ctor: '[]'}),
+														_1: {
+															ctor: '::',
+															_0: A2(
+																_elm_lang$html$Html$div,
+																{ctor: '[]'},
+																A2(
+																	_elm_lang$core$List$map,
+																	_elm_lang$elm_architecture_tutorial$NameFace_Rendering$nameSelect(model),
+																	model.names)),
+															_1: {ctor: '[]'}
+														}
+													}
+												}
 											}
 										}
 									}
@@ -9865,11 +9920,12 @@ var _elm_lang$elm_architecture_tutorial$Main$initialize = function (flags) {
 			selectedName: _elm_lang$core$Maybe$Nothing,
 			selectedFace: _elm_lang$core$Maybe$Nothing,
 			matches: {ctor: '[]'},
-			matchesRequired: 6
+			matchesRequired: 6,
+			combo: 0
 		},
 		_1: A2(
 			_elm_lang$core$Random$generate,
-			_elm_lang$elm_architecture_tutorial$NameFace_State$PeopleShuffled,
+			_elm_lang$elm_architecture_tutorial$NameFace_State$NewGame,
 			_elm_community$random_extra$Random_List$shuffle(
 				_elm_lang$elm_architecture_tutorial$Main$withOrder(flags.people)))
 	};

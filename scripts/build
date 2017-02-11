@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+elm-make elm/src/main.elm --output chrome-extension/src/inject/elm-game.js
+/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --pack-extension="chrome-extension" --pack-extension-key="name-face-game.pem"
