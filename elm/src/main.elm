@@ -1,7 +1,7 @@
 module Main exposing (main)
 
 import NameFace.Domain exposing (..)
-import NameFace.State exposing (..)
+import NameFace.State
 import NameFace.Rendering exposing (view)
 
 
@@ -20,12 +20,12 @@ main =
     Html.programWithFlags
         { init = initialize
         , view = view
-        , update = update
+        , update = NameFace.State.update
         , subscriptions = \_ -> Sub.none
         }
 
 
-initialize : { people : List UnorderedPerson } -> ( NameFaceGame, Cmd Event )
+initialize : { people : List UnorderedPerson } -> ( NameFaceGame, Cmd NameFace.State.Event )
 initialize flags =
     ( { people = []
       , names = []
@@ -35,7 +35,7 @@ initialize flags =
       , matches = []
       , matchesRequired = 6
       }
-    , Random.generate PeopleShuffled (Random.List.shuffle (withOrder flags.people))
+    , Random.generate NameFace.State.NewGame (Random.List.shuffle (withOrder flags.people))
     )
 
 
