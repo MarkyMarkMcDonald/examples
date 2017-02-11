@@ -1,4 +1,4 @@
-module NameFace.State exposing (Event(ChooseName, ChooseFace, NewGame, PeopleShuffled), update)
+module NameFace.State exposing (Event(ChooseName, ChooseFace, NewGame), update)
 
 import NameFace.Domain exposing (..)
 import Random
