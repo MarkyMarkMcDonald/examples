@@ -1,16 +1,11 @@
 var intervalId;
-var people;
 
 $(function() {
-    $('body').on('click', '#game-restart, #pre-elm-load-start', function() {
-        if (!people) {
-            scrapePeople(function(scrapedPeople) {
-                people = scrapedPeople;
-                resetGame(scrapedPeople);
-            });
-        } else {
-            resetGame(people)
-        }
+    $('body').on('click', '#pre-elm-load-start', function() {
+        scrapePeople(function(people) {
+            $('body *').css('display', 'none');
+            Elm.Main.fullscreen({people: people});
+        });
     });
 
     window.setInterval(function() {
@@ -20,12 +15,6 @@ $(function() {
         }
     }, 1000);
 })
-
-function resetGame(peoplePool) {
-    $('body *').css('display', 'none');
-    var randomSample = window.knuthShuffle(people).slice(0,6);
-    Elm.Main.fullscreen({people: randomSample});
-}
 
 function scrapePeople (success) {
     function faceUrl($employee) {
