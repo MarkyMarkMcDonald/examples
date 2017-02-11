@@ -20,6 +20,9 @@ view model =
         , messageToUser model
         , br [] []
         , br [] []
+        , div [] [ text <| "Combo: " ++ (toString model.combo) ]
+        , br [] []
+        , br [] []
         , button [ onClick (NewGame model.people) ] [ text "New People" ]
         , br [] []
         , br [] []

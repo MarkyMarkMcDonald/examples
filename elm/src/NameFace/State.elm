@@ -18,7 +18,7 @@ update : Event -> NameFaceGame -> ( NameFaceGame, Cmd Event )
 update msg model =
     case msg of
         NewGame people ->
-            ( { model | people = people }, Random.generate PeopleShuffled <| (Random.List.shuffle people) )
+            ( { model | people = people, matches = [] }, Random.generate PeopleShuffled <| (Random.List.shuffle people) )
 
         PeopleShuffled people ->
             ( { model | people = people }, Random.generate FacesShuffled <| Random.List.shuffle (people |> List.take model.matchesRequired |> List.map toFace) )
@@ -30,10 +30,10 @@ update msg model =
             ( { model | names = names }, Cmd.none )
 
         ChooseName personId ->
-            ( selectName personId model |> handleMatch, Cmd.none )
+            ( selectName personId model |> handleMatch |> handleMisMatch, Cmd.none )
 
         ChooseFace personId ->
-            ( selectFace personId model |> handleMatch, Cmd.none )
+            ( selectFace personId model |> handleMatch |> handleMisMatch, Cmd.none )
 
 
 
@@ -47,12 +47,26 @@ handleMatch model =
         |> Maybe.withDefault model
 
 
+handleMisMatch : NameFaceGame -> NameFaceGame
+handleMisMatch model =
+    if matchAttempted model && (model.selectedFace /= model.selectedName) then
+        { model | combo = max 0 (model.combo - 1) }
+    else
+        model
+
+
+matchAttempted : NameFaceGame -> Bool
+matchAttempted model =
+    (Maybe.map2 (\_ _ -> True) model.selectedFace model.selectedName) |> Maybe.withDefault False
+
+
 addMatch : NameFaceGame -> PersonId -> NameFaceGame
 addMatch model personId =
     { model
         | matches = List.append [ personId ] model.matches
         , selectedName = Nothing
         , selectedFace = Nothing
+        , combo = model.combo + 1
     }
 
 

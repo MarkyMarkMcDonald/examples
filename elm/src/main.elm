@@ -34,6 +34,7 @@ initialize flags =
       , selectedFace = Nothing
       , matches = []
       , matchesRequired = 6
+      , combo = 0
       }
     , Random.generate NameFace.State.NewGame (Random.List.shuffle (withOrder flags.people))
     )

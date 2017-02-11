@@ -9,6 +9,7 @@ type alias NameFaceGame =
     , selectedName : Maybe PersonId
     , selectedFace : Maybe PersonId
     , matches : Matches
+    , combo : Int
     }
 
 
