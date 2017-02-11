@@ -17,6 +17,23 @@ $(function() {
 })
 
 function scrapePeople (success) {
+    forceImagesToLoad(function() {
+        var people =  $('.tile .employee').map(function(_, employee) {
+            var $employee = $(employee);
+            return {
+                name: $employee.prop('title'),
+                faceUrl: faceUrl($employee)
+            };
+        }).toArray();
+
+        var validPeople = people.filter(function(person) {
+            return person.faceUrl && person.name
+        });
+
+        success(validPeople);
+    })
+
+
     function faceUrl($employee) {
         var backgroundImage = $employee.prop('style').getPropertyValue('background-image');
         try {
@@ -32,21 +49,9 @@ function scrapePeople (success) {
         }
     }
 
-    $('html').animate({ scrollTop: $(document).height() }, "slow", function(){
-        $('body').animate({ scrollTop: $(document).height() }, "slow", function() {
-            var people =  $('.tile .employee').map(function(_, employee) {
-                var $employee = $(employee);
-                return {
-                    name: $employee.prop('title'),
-                    faceUrl: faceUrl($employee)
-                };
-            }).toArray();
-
-            var validPeople = people.filter(function(person) {
-                return person.faceUrl && person.name
-            });
-
-            success(validPeople);
-        })
-    });
+    function forceImagesToLoad(callback) {
+        $('html').animate({ scrollTop: $(document).height() }, "slow", function(){
+            $('body').animate({ scrollTop: $(document).height() }, "slow", callback)
+        });
+    }
 }
