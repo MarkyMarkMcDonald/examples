@@ -7055,14 +7055,35 @@ var _elm_lang$elm_architecture_tutorial$NameFace_State$handleMatch = function (m
 			_elm_lang$elm_architecture_tutorial$NameFace_State$addMatch(model),
 			_elm_lang$elm_architecture_tutorial$NameFace_State$nameFaceMatchId(model)));
 };
-var _elm_lang$elm_architecture_tutorial$NameFace_State$NamesShuffled = function (a) {
-	return {ctor: 'NamesShuffled', _0: a};
+var _elm_lang$elm_architecture_tutorial$NameFace_State$SetNames = function (a) {
+	return {ctor: 'SetNames', _0: a};
 };
-var _elm_lang$elm_architecture_tutorial$NameFace_State$FacesShuffled = function (a) {
-	return {ctor: 'FacesShuffled', _0: a};
+var _elm_lang$elm_architecture_tutorial$NameFace_State$SetFaces = function (a) {
+	return {ctor: 'SetFaces', _0: a};
 };
-var _elm_lang$elm_architecture_tutorial$NameFace_State$PeopleShuffled = function (a) {
-	return {ctor: 'PeopleShuffled', _0: a};
+var _elm_lang$elm_architecture_tutorial$NameFace_State$setupNamesAndFaces = function (model) {
+	var peopleForRound = A2(_elm_lang$core$List$take, model.matchesRequired, model.people);
+	var takeThenShuffle = F2(
+		function (transformation, eventCreator) {
+			return A2(
+				_elm_lang$core$Random$generate,
+				eventCreator,
+				_elm_community$random_extra$Random_List$shuffle(
+					A2(_elm_lang$core$List$map, transformation, peopleForRound)));
+		});
+	return _elm_lang$core$Platform_Cmd$batch(
+		{
+			ctor: '::',
+			_0: A2(takeThenShuffle, _elm_lang$elm_architecture_tutorial$NameFace_Domain$toFace, _elm_lang$elm_architecture_tutorial$NameFace_State$SetFaces),
+			_1: {
+				ctor: '::',
+				_0: A2(takeThenShuffle, _elm_lang$elm_architecture_tutorial$NameFace_Domain$toName, _elm_lang$elm_architecture_tutorial$NameFace_State$SetNames),
+				_1: {ctor: '[]'}
+			}
+		});
+};
+var _elm_lang$elm_architecture_tutorial$NameFace_State$SetPeople = function (a) {
+	return {ctor: 'SetPeople', _0: a};
 };
 var _elm_lang$elm_architecture_tutorial$NameFace_State$update = F2(
 	function (msg, model) {
@@ -7080,41 +7101,27 @@ var _elm_lang$elm_architecture_tutorial$NameFace_State$update = F2(
 						}),
 					_1: A2(
 						_elm_lang$core$Random$generate,
-						_elm_lang$elm_architecture_tutorial$NameFace_State$PeopleShuffled,
+						_elm_lang$elm_architecture_tutorial$NameFace_State$SetPeople,
 						_elm_community$random_extra$Random_List$shuffle(_p3))
 				};
-			case 'PeopleShuffled':
-				var _p4 = _p2._0;
+			case 'SetPeople':
+				var newModel = _elm_lang$core$Native_Utils.update(
+					model,
+					{people: _p2._0});
 				return {
 					ctor: '_Tuple2',
-					_0: _elm_lang$core$Native_Utils.update(
-						model,
-						{people: _p4}),
-					_1: A2(
-						_elm_lang$core$Random$generate,
-						_elm_lang$elm_architecture_tutorial$NameFace_State$FacesShuffled,
-						_elm_community$random_extra$Random_List$shuffle(
-							A2(
-								_elm_lang$core$List$map,
-								_elm_lang$elm_architecture_tutorial$NameFace_Domain$toFace,
-								A2(_elm_lang$core$List$take, model.matchesRequired, _p4))))
+					_0: newModel,
+					_1: _elm_lang$elm_architecture_tutorial$NameFace_State$setupNamesAndFaces(newModel)
 				};
-			case 'FacesShuffled':
+			case 'SetFaces':
 				return {
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
 						model,
 						{faces: _p2._0}),
-					_1: A2(
-						_elm_lang$core$Random$generate,
-						_elm_lang$elm_architecture_tutorial$NameFace_State$NamesShuffled,
-						_elm_community$random_extra$Random_List$shuffle(
-							A2(
-								_elm_lang$core$List$map,
-								_elm_lang$elm_architecture_tutorial$NameFace_Domain$toName,
-								A2(_elm_lang$core$List$take, model.matchesRequired, model.people))))
+					_1: _elm_lang$core$Platform_Cmd$none
 				};
-			case 'NamesShuffled':
+			case 'SetNames':
 				return {
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(

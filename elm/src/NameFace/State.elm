@@ -9,24 +9,26 @@ type Event
     = ChooseName PersonId
     | ChooseFace PersonId
     | NewGame (List Person)
-    | PeopleShuffled (List Person)
-    | FacesShuffled (List (WithFace {}))
-    | NamesShuffled (List (WithName {}))
+    | SetPeople (List Person)
+    | SetFaces (List (WithFace {}))
+    | SetNames (List (WithName {}))
+--    | GameReady {faces: List (WithFace {}), names: List (WithName {}), people: List Person}
 
 
 update : Event -> NameFaceGame -> ( NameFaceGame, Cmd Event )
 update msg model =
     case msg of
         NewGame people ->
-            ( { model | people = people, matches = [] }, Random.generate PeopleShuffled <| (Random.List.shuffle people) )
+            ( { model | people = people, matches = [] }, Random.generate SetPeople <| (Random.List.shuffle people) )
 
-        PeopleShuffled people ->
-            ( { model | people = people }, Random.generate FacesShuffled <| Random.List.shuffle (people |> List.take model.matchesRequired |> List.map toFace) )
+        SetPeople people ->
+            let newModel = { model | people = people } in
+            ( newModel, setupNamesAndFaces newModel )
 
-        FacesShuffled faces ->
-            ( { model | faces = faces }, Random.generate NamesShuffled <| Random.List.shuffle (model.people |> List.take model.matchesRequired |> List.map toName) )
+        SetFaces faces ->
+            ( { model | faces = faces }, Cmd.none )
 
-        NamesShuffled names ->
+        SetNames names ->
             ( { model | names = names }, Cmd.none )
 
         ChooseName personId ->
@@ -38,6 +40,17 @@ update msg model =
 
 
 -- UNEXPOSED
+
+
+setupNamesAndFaces : NameFaceGame -> Cmd Event
+setupNamesAndFaces model =
+    let
+        peopleForRound = model.people |> List.take model.matchesRequired
+        takeThenShuffle : (Person -> a) -> (List a -> Event) -> Cmd Event
+        takeThenShuffle transformation eventCreator =
+            Random.generate eventCreator <| Random.List.shuffle (List.map transformation peopleForRound)
+    in
+        Cmd.batch [takeThenShuffle toFace SetFaces, takeThenShuffle toName SetNames]
 
 
 handleMatch : NameFaceGame -> NameFaceGame
