@@ -20,7 +20,7 @@ view model =
         , messageToUser model
         , br [] []
         , br [] []
-        , button [ id "game-restart" ] [ text "New People" ]
+        , button [ onClick (NewGame model.people) ] [ text "New People" ]
         , br [] []
         , br [] []
         , div [] (List.map (nameSelect model) model.names)
