@@ -69,7 +69,9 @@ handleMisMatch model =
 
 matchAttempted : NameFaceGame -> Bool
 matchAttempted model =
-    (Maybe.map2 (\_ _ -> True) model.selectedFace model.selectedName) |> Maybe.withDefault False
+    case (model.selectedFace, model.selectedName) of
+        (Just _, Just _) -> True
+        _ -> False
 
 
 addMatch : NameFaceGame -> PersonId -> NameFaceGame
