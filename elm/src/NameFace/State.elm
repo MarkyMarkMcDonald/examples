@@ -12,7 +12,6 @@ type Event
     | SetPeople (List Person)
     | SetFaces (List (WithFace {}))
     | SetNames (List (WithName {}))
---    | GameReady {faces: List (WithFace {}), names: List (WithName {}), people: List Person}
 
 
 update : Event -> NameFaceGame -> ( NameFaceGame, Cmd Event )
