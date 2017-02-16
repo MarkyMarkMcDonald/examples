@@ -1,24 +1,61 @@
-.name-option {
-    border: black solid 5px;
-    display: inline-block;
-    height: 200px;
-    width: 200px;
-    line-height: 200px;
-    text-align: center;
+body, html {
+  padding: 0;
+  margin: 0;
 }
 
-.face-option {
-    border: black solid 5px;
-    display: inline-block;
-    height: 200px;
-    width: 200px;
+.option {
+  cursor: pointer;
+  border: gray outset 10px;
+  display: inline-block;
+  margin-right: 20px;
+  height: 200px;
+  width: 200px;
+  line-height: 200px;
+  text-align: center;
 }
 
 .selected {
-    border: red solid 5px;
+    border-color: blue;
 }
 
 .matched {
-    border: green solid 5px;
+    border-color: green;
 }
 
+
+.fire {
+  opacity: 0;
+  box-shadow: inset 0 5px 0 0 black;
+  pointer-events: none;
+  visibility: hidden;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  height: 220px;
+  background: url(http://martincrownover.com/blog/wp-content/uploads/2009/04/particle-fire-header-ani.gif);
+  z-index: 9999;
+  background-size: 400px;
+  background-repeat: repeat;
+  transition: all .2s ease-out;
+}
+
+#wrapper {
+  padding: 25px;
+  transition: all .2s ease-out;
+  height: 100vh;
+}
+
+#wrapper.has-combo .option:not(.selected):not(.matched) {
+  border-color: white;
+}
+
+#wrapper.has-combo {
+  background: black;
+  border-color: white;
+  color: white;
+}
+
+#wrapper.has-combo .fire {
+  opacity: 1;
+  visibility: visible;
+}

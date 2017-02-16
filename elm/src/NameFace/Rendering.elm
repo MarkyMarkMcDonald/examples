@@ -13,7 +13,7 @@ import Html.Events exposing (onClick)
 
 view : NameFaceGame -> Html Event
 view model =
-    div []
+    div [ id "wrapper", wrapperClasses model ]
         [ div [] (List.map (faceSelect model model.selectedFace) model.faces)
         , br [] []
         , br [] []
@@ -27,6 +27,7 @@ view model =
         , br [] []
         , br [] []
         , div [] (List.map (nameSelect model) model.names)
+        , div [ class "fire" ] []
         ]
 
 
@@ -73,9 +74,16 @@ nameSelect model person =
 nameClasses : NameFaceGame -> PersonId -> Html.Attribute msg
 nameClasses model id =
     classList
-        [ ( "name-option", True )
+        [ ( "option", True )
         , ( "selected", Just id == model.selectedName )
         , ( "matched", List.any ((==) id) model.matches )
+        ]
+
+
+wrapperClasses : NameFaceGame -> Html.Attribute msg
+wrapperClasses model =
+    classList
+        [ ( "has-combo", model.combo >= model.matchesRequired )
         ]
 
 
@@ -92,7 +100,7 @@ faceSelect model selectedId person =
 faceClasses : Matches -> Maybe PersonId -> PersonId -> Html.Attribute msg
 faceClasses matches selectedFace id =
     classList
-        [ ( "face-option", True )
+        [ ( "option", True )
         , ( "matched", List.any ((==) id) matches )
         , ( "selected", Just id == selectedFace )
         ]

@@ -62,7 +62,7 @@ handleMatch model =
 handleMisMatch : NameFaceGame -> NameFaceGame
 handleMisMatch model =
     if matchAttempted model && (model.selectedFace /= model.selectedName) then
-        { model | combo = max 0 (model.combo - 1) }
+        { model | combo = 0 }
     else
         model
 
@@ -86,10 +86,10 @@ addMatch model personId =
 
 nameFaceMatchId : NameFaceGame -> Maybe PersonId
 nameFaceMatchId model =
-    if (Maybe.map2 (==) model.selectedFace model.selectedName) |> Maybe.withDefault False then
-        model.selectedFace
-    else
-        Nothing
+    case (model.selectedFace, model.selectedName) of
+      (Just faceId, Just nameId) -> if faceId == nameId then Just faceId else Nothing
+      _ -> Nothing
+
 
 
 matchesFace : PersonId -> NameFaceGame -> Bool
