@@ -23,7 +23,6 @@
       ],
       "js": [
         "js/jquery/jquery.min.js",
-        "src/inject/shuffle.js",
         "src/inject/elm-game.js",
         "src/inject/inject.js"
       ]
