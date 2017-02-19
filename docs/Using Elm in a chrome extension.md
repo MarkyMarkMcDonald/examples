@@ -60,7 +60,7 @@ Development from this point on is the same as any other chrome extension develop
 
 ## 6. Tweak the boundaries
 
-Did we really perfectly envision how we would interopt with our elm component on the first try? Of course not. We started from a layer below our delivery mechanism, so we had to change a few things around to later support a new feature.
+Did we really perfectly envision how we would interopt with our elm component on the first try? Of course not. We started from a layer below our delivery mechanism, so we had to change a few things around later in order to support a new feature.
 
 Originally when you clicked "show me new faces", I cleared the dom and started the elm program again with random people. I wanted to track the combo count across different sets of names and faces, so I moved handling new rounds to inside the elm app instead of creating the elm component over and over again.
 
