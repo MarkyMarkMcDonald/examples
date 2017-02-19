@@ -1,6 +1,6 @@
 # How to hack together a chrome extension that uses elm in a weekend
 
-I recently built a chrome extension to help me learn the names of my new coworkers faster. When I go to my company's employee directory, there's a conspicuous "Play the Name Game" button my extension adds. Clicking it scrapes the page of all the people's names and faces, then takes over the DOM with a matching game. 
+I recently built a chrome extension to help me learn the names of my new coworkers faster. When I go to my company's employee directory, there's a conspicuous "Play the Name Game" button my extension adds. Clicking it scrapes the page of all the people's names and faces, then takes over the DOM with a name-to-face matching game. 
 
 Here's an example outside of the chrome extension:
 
