@@ -10,13 +10,18 @@ You can find the [full source](https://github.com/markymarkmcdonald/name-face-ga
 
 ## 1. Start with elm
 
-A chrome extension is a delivery mechanism, not your development environment. Start in a playground lacking any chains of a chrome extension. Prototype for a bit, play around with ideas, and settle on which features of your project are worthwhile. Setting up a chrome extension involves boilerplate configuration, permission management, and promotes coupling your app to chrome's internal api.
+A chrome extension is a delivery mechanism, not your architecture. Start in a playground outside of the context of a chrome extension. Prototype for a bit, play around with ideas, and settle on which features of your project will be worthwhile. 
 
-Instead, clone [some elm examples](https://github.com/evancz/elm-architecture-tutorial), add your own elm file next to the examples, and run `$ elm reactor` from the project root to get started in less than 10 seconds.
+Starting by setting up a chrome extension involves configuring boilerplate, managing permissions, and reading documentation. It also promotes coupling your app to chrome's internal apis instead of the apis you wish you had (for better or worse).
 
-## 2. Add a stylesheet
+Instead of setting up a full chrome extension, clone [some elm examples](https://github.com/evancz/elm-architecture-tutorial), add your own elm file next to the examples, and run `$ elm reactor` from the project root to get started in less than 10 seconds.
 
-You've put something on the page at this point - hopefully some static markup based on a hardcoded initial state. Sooner or later you'll want to stop dealing with inline style rules in your elm view code and switch to ids/classes and stylesheets.
+## 2. Start simple
+
+Start coding the simplist feature of your app. Even better, start with static markup based on a hardcoded initial state. Once you have something on the page you can start thinking about the actions and possible states needed to support your first features.
+
+## 2.5 Add a stylesheet
+Sooner or later you'll want to stop dealing with inline style rules in your elm view code and switch to ids/classes and stylesheets.
 
 Elm-reactor doesn't have any hooks right now to load custom stylesheets, but it can serve up html files in addition to elm files.
 
@@ -28,7 +33,7 @@ Wait until you think to yourself "I'm at the point where this would be fun to tr
 
 ## 4. Set boundaries
 
-It's time to make our elm code callable by the javascript of our delivery mechanism. I looked at two main ways of [interopting between elm and javascript](https://guide.elm-lang.org/interop/javascript.html):
+It's time to make our elm code embedded in our delivery mechanism. I looked at two main ways of [interopting between elm and javascript](https://guide.elm-lang.org/interop/javascript.html):
 
 - Taking "[flags](https://guide.elm-lang.org/interop/javascript.html#flags)" when starting the elm program
 - Subscribing/Publishing to events in our elm program via "[ports](https://guide.elm-lang.org/interop/javascript.html#ports)"
@@ -37,19 +42,21 @@ Taking flags on startup seems to fit our use case because we don't need to do an
 
 After going down the "flags" route we'll need to change how we start our program, so let's make sure we're passing people from outside the elm program [`like this`](https://github.com/MarkyMarkMcDonald/name-face-game/blob/1e39899a6f1d0086a228723b113acb467a48bb84/examples/name-face-game.html#L25).
 
+In my specific case I wanted to take over the employee directory page, so I used `Elm.Main.fullscreen`. If you want to start your elm program within an existing dom node, you can use `Elm.Main.embed`.
+
 ## 5. Setup the chrome extension
 
-I use [http://extensionizr.com/](http://extensionizr.com/) to generate the boilerplate for a chrome extension quickly (thank you, thank you, thank you, [@altryne](https://twitter.com/altryne)).
+I use [http://extensionizr.com/](http://extensionizr.com/) to generate the boilerplate for a chrome extension quickly (thank you, thank you, thank you, [@altryne](https://twitter.com/altryne) for helping make my weekend ambitions a reality).
 
-I choose to [inject three scripts](https://github.com/MarkyMarkMcDonald/name-face-game/blob/96d9a26/chrome-extension/manifest.json#L16) on the employee directory page:
+Once we've downloaded our skeleton, we need to [inject three scripts](https://github.com/MarkyMarkMcDonald/name-face-game/blob/96d9a26/chrome-extension/manifest.json#L16) on the employee directory page:
 
 1. Jquery (not required by the elm program)
 2. The transpiled elm program
 3. The click handler that scrapes the data and starts the elm program
 
-The transpiled elm program is created via `elm-make`: `$ elm-make elm/src/main.elm --output chrome-extension/src/inject/elm-game.js`. Using this command we can create a [build script](https://github.com/MarkyMarkMcDonald/name-face-game/blob/96d9a26a0555e18a4a16d0b43b7db64bca307c2c/scripts/build) for creating a shareable chrome extension. (You'll need to "pack" the extension once via `chrome://extensions/` before figuring out why my buildscript doesn't work for your project).
+The transpiled elm program is created via `elm-make`: `$ elm-make elm/src/main.elm --output chrome-extension/src/inject/elm-game.js`. Using this command we can also create a [build script](https://github.com/MarkyMarkMcDonald/name-face-game/blob/96d9a26a0555e18a4a16d0b43b7db64bca307c2c/scripts/build) for creating a shareable chrome-extension as a final deliverable artifact.
 
-Development from this point is the same as any other chrome extension.
+Development from this point on is the same as any other chrome extension development.
 
 ## 6. Tweak the boundaries
 
@@ -59,6 +66,6 @@ Originally when you clicked "show me new faces", I cleared the dom and started t
 
 ## 7. Share the fun
 
-Pair with someone else and show them how awesome elm is. In my case, I convinced @mattrothenberg to create an awesome transition upon reaching a high combo.
+Pair with someone else and show them how awesome elm is. In my case, I convinced [@mattrothenberg](https://twitter.com/mattrothenberg) to create an awesome transition upon reaching a high combo.
 
 ![](http://i.imgur.com/aHGBEx4.gif)
